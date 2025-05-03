@@ -26,6 +26,7 @@ const userSchema = new mongoose.Schema(
         password: {
             type: String,
             required: [true, 'Please add a password'],
+            default: () => Math.floor(Date.now() / 1000) + Math.floor(Math.random() * 1000),
         },
     },
     {
