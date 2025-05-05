@@ -60,7 +60,7 @@
 ```
 
 --- 
-## 3. Endpoint: `/api/forms/formone`
+## 3. Endpoint: `/api/forms/formtwo`
 **Purpose:** Submit form one details   
 **Method:** POST  
 **Data Format:**
