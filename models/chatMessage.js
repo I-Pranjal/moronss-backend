@@ -4,7 +4,6 @@ const chatMessageSchema = new mongoose.Schema(
   {
     sessionId: {
       type: String,
-      ref: 'ChatSession',
       required: true,
     },
     sender: {
