@@ -35,12 +35,16 @@ const signInOrSignUpUser = async (req, res) => {
 
         user = await User.create({ name, email, password });
 
-        res.status(201).json({
-            message: 'User signed up successfully',
-            _id: user._id,
-            name: user.name,
-            email: user.email,
-        });
+        res.status(200).json({
+        message: 'User signed in successfully',
+        user: {
+          _id: user._id,
+          name: user.name,
+          email: user.email,
+          profilePicture: user.profilePictureUrl,
+          randomInteger: user.randomInteger,
+        },
+      });
     } catch (error) {
         console.error('Error handling user:', error.message);
         res.status(500).json({ message: 'Server error' });
