@@ -9,8 +9,8 @@ const chatMessageSchema = new mongoose.Schema(
     chatType : {
       type : String, 
       enum : ['Job Hunting', 'Resume Analysis', 'Mock Interview'], 
-      required : false, 
-      default : 'Resume Analysis'
+      required : true, 
+      // default : 'Resume Analysis'
     },
     sender: {
       type: String, // 'user' or 'assistant'
