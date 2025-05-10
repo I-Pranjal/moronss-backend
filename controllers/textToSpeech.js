@@ -3,7 +3,7 @@ const { ElevenLabsClient } = require('elevenlabs');
 
 dotenv.config();
 
-const ELEVENLABS_API_KEY = process.env.ELEVENLABS_API_KEY;
+const ELEVENLABS_API_KEY = "sk_00ff0999d81aaf2ee302b389f78652b88ed1bb04ee78dca8";
 
 if (!ELEVENLABS_API_KEY) {
     throw new Error('Missing ELEVENLABS_API_KEY in environment variables');
