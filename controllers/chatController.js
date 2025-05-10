@@ -21,8 +21,8 @@ exports.createSession = async (req, res) => {
 // Add a message to a session
 exports.addMessage = async (req, res) => {
   try {
-    const { sessionId, sender, content } = req.body;
-    const message = await ChatMessage.create({ sessionId, sender, content });
+    const { sessionId, sender, content, chatType } = req.body;
+    const message = await ChatMessage.create({ sessionId, sender, content, chatType });
     res.status(201).json(message);
   } catch (err) {
     res.status(500).json({ error: err.message });
