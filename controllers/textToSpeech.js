@@ -1,7 +1,5 @@
-const dotenv = require('dotenv');
 const { ElevenLabsClient } = require('elevenlabs');
 
-dotenv.config();
 
 const ELEVENLABS_API_KEY = "sk_00ff0999d81aaf2ee302b389f78652b88ed1bb04ee78dca8";
 
