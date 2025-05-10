@@ -18,6 +18,7 @@ const createAudioStreamFromText = async (text) => {
         console.log('Creating audio stream from text:', text);
         console.log('Using ElevenLabs API key:', ELEVENLABS_API_KEY);
         const audioStream = await client.textToSpeech.convertAsStream('JBFqnCBsd6RMkjVDRZzb', {
+            voiceId: 'EXAVITQu4vr4xnSDxMaL',
             model_id: 'eleven_multilingual_v2',
             text,
             output_format: 'mp3_44100_128',
