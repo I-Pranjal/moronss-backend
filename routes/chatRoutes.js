@@ -19,4 +19,7 @@ router.get('/sessions/:userRef', getUserSessions);
 // Get all messages for a session
 router.get('/messages/:sessionId', getSessionMessages);
 
+
+
+
 module.exports = router;
