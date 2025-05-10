@@ -20,12 +20,16 @@ const signInOrSignUpUser = async (req, res) => {
         let user = await User.findOne({ email });
         if (user) {
             // Sign in logic
-            return res.status(200).json({
-                message: 'User signed in successfully',
-                _id: user._id,
-                name: user.name,
-                email: user.email,
-            });
+            res.status(200).json({
+        message: 'User signed in successfully',
+        user: {
+          _id: user._id,
+          name: user.name,
+          email: user.email,
+          profilePicture: user.profilePictureUrl,
+          randomInteger: user.randomInteger,
+        },
+      });
         }
 
         // If user doesn't exist, sign up
