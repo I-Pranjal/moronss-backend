@@ -22,7 +22,8 @@ const formOneSchema = new mongoose.Schema({
     },
     randomInteger: {
         type: Number,
-        default: () => Math.floor(Date.now() / 1000) + Math.floor(Math.random() * 1000),
+        required: true,
+        // default: () => Math.floor(Date.now() / 1000) + Math.floor(Math.random() * 1000),
     }
 });
 
