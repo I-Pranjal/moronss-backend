@@ -6,6 +6,7 @@ const {
   getUserSessions,
   getSessionMessages,
 } = require('../controllers/chatController');
+const { getjobHunterResponse } = require('../controllers/jobhunterController');
 
 // Create a new chat session
 router.post('/session', createSession);
@@ -19,6 +20,8 @@ router.get('/sessions/:userRef', getUserSessions);
 // Get all messages for a session
 router.get('/messages/:sessionId', getSessionMessages);
 
+// get response for the gemini job hunter 
+router.post('/gemini', getjobHunterResponse); 
 
 
 
