@@ -110,8 +110,10 @@ const signInWithGoogle = async (req, res) => {
 const updateUserDetails = async (req, res) => {
     const { name, email, profilePictureUrl, randomInteger } = req.body;
     const userId = randomInteger;
+    console.log('Updating user details');
 
     try {
+      console.log('Received data:', req.body);
         const updatedUser = await User.findOneAndUpdate(
             {randomInteger},
             { name, email, profilePictureUrl },
