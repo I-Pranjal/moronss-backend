@@ -105,6 +105,29 @@ const signInWithGoogle = async (req, res) => {
     }
   };
   
+
+// Update user Details 
+const updateUserDetails = async (req, res) => {
+    const { name, email, profilePictureUrl, randomInteger } = req.body;
+    const userId = randomInteger;
+
+    try {
+        const updatedUser = await User.findByIdAndUpdate(
+            userId,
+            { name, email, profilePictureUrl },
+            { new: true }
+        );
+
+        if (!updatedUser) {
+            return res.status(404).json({ message: 'User not found' });
+        }
+
+        res.status(200).json(updatedUser);
+    } catch (error) {
+        console.error('Error updating user details:', error.message);
+        res.status(500).json({ message: 'Server error' });
+    }
+};
   
 
 
@@ -113,7 +136,8 @@ const signInWithGoogle = async (req, res) => {
 
 module.exports = { 
     signInOrSignUpUser,
-     getAllUsers ,
-     signInWithGoogle
+    getAllUsers ,
+    signInWithGoogle,
+    updateUserDetails
     };
 
