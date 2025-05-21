@@ -112,8 +112,8 @@ const updateUserDetails = async (req, res) => {
     const userId = randomInteger;
 
     try {
-        const updatedUser = await User.findByIdAndUpdate(
-            userId,
+        const updatedUser = await User.findOneAndUpdate(
+            {randomInteger},
             { name, email, profilePictureUrl },
             { new: true }
         );
