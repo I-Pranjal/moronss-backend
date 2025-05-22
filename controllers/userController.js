@@ -109,6 +109,7 @@ const signInWithGoogle = async (req, res) => {
 // Get details of a user by randomInteger
 const getUserByRandomInteger = async (req, res) => {
     const { randomInteger } = req.params;
+    console.log('Fetching user by randomInteger:', randomInteger);
 
     try {
         const user = await User.findOne({ randomInteger });
@@ -121,7 +122,7 @@ const getUserByRandomInteger = async (req, res) => {
         res.status(500).json({ message: 'Server error' });
     }
 }  
-
+ 
 // Update user Details 
 const updateUserDetails = async (req, res) => {
     const { name, email, profilePictureUrl, randomInteger } = req.body;

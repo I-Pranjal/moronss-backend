@@ -7,7 +7,7 @@ router.post('/', signInOrSignUpUser);
 router.get('/', getAllUsers);
 router.post('/google', signInWithGoogle);
 router.put('/update', updateUserDetails);
-router.get('/getuserdetails', getUserByRandomInteger);
+router.get('/getuserdetails/:randomInteger', getUserByRandomInteger);
 
 
 
