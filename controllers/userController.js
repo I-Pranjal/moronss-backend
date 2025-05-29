@@ -226,7 +226,7 @@ const signInWithLinkedIn = async (req, res) => {
 
     const token = jwt.sign(payload, JWT_SECRET, { expiresIn: "1h" });
 
-    res.redirect(`http://localhost:5173/linkedinCallback?token=${token}`);
+    res.redirect(`https://morons-frontend.vercel.app/linkedinCallback?token=${token}`);
 
 
   } catch (error) {
