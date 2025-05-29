@@ -3,6 +3,8 @@ const { OAuth2Client } = require('google-auth-library');
 const client = new OAuth2Client(process.env.GOOGLE_CLIENT_ID);
 const axios = require('axios');
 const googleTokenEndpoint = 'https://oauth2.googleapis.com/token';
+const jwt = require("jsonwebtoken");
+const JWT_SECRET = process.env.JWT_SECRET || "your_jwt_secret"; 
 
 // @desc    Sign in or sign up a user
 // @route   POST /api/users
@@ -26,7 +28,7 @@ const signInOrSignUpUser = async (req, res) => {
           _id: user._id,
           name: user.name,
           email: user.email,
-          profilePicture: user.profilePictureUrl,
+          profilePictureUrl: user.profilePictureUrl,
           randomInteger: user.randomInteger,
         },
       });
@@ -45,7 +47,7 @@ const signInOrSignUpUser = async (req, res) => {
           _id: user._id,
           name: user.name,
           email: user.email,
-          profilePicture: user.profilePictureUrl,
+          profilePictureUrl: user.profilePictureUrl,
           randomInteger: user.randomInteger,
         },
       });
@@ -94,7 +96,7 @@ const signInWithGoogle = async (req, res) => {
           _id: user._id,
           name: user.name,
           email: user.email,
-          profilePicture: user.profilePictureUrl,
+          profilePictureUrl: user.profilePictureUrl,
           randomInteger: user.randomInteger,
         },
       });
@@ -149,6 +151,133 @@ const updateUserDetails = async (req, res) => {
 };
   
 
+const fetchAccessToken = async (code) => {
+  const url = `https://www.linkedin.com/oauth/v2/accessToken?code=${code}&client_id=866rz0asjacoqy&client_secret=WPL_AP1.uUO1sfdl8exfjMa2.wpNLwg==&redirect_uri=https://moronss-backend.onrender.com/api/linkedin/callback&grant_type=authorization_code&scope=liteprofile%20emailaddress`;
+
+  try {
+    const response = await axios.get(url);
+    return response.data.access_token;
+  } catch (error) {
+    console.error("Error fetching access token:", error.message);
+    throw new Error("Failed to fetch access token");
+  }
+};
+
+const fetchLinkedInUserInfo = async (accessToken) => {
+  try {
+    const response = await axios.get('https://api.linkedin.com/v2/userinfo', {
+      headers: {
+        Authorization: `Bearer ${accessToken}`,
+        scope: 'r_emailaddress',
+      },
+    });
+    return response.data;
+  } catch (error) {
+    console.error("Error fetching user info:", error.message);
+    throw new Error("Failed to fetch user info");
+  }
+};
+
+// const signInWithLinkedIn = async (req, res) => {
+//   try {
+//     const { code } = req.query;
+
+//     if (!code) {
+//       return res.status(400).json({ error: "Authorization code is required" });
+//     }
+
+//     const accessToken = await fetchAccessToken(code);
+//     console.log("The obtained access token is:", accessToken);
+
+//     const userInfo = await fetchLinkedInUserInfo(accessToken);
+//     console.log("User info from LinkedIn:", userInfo);
+//     const newUser = await registerLinkedInUser(userInfo);
+//     res.json(newUser.user);
+//   } catch (error) {
+//     console.error("Unexpected error:", error.message);
+//     res.status(500).json({ error: error.message });
+//   }
+// };
+
+
+const signInWithLinkedIn = async (req, res) => {
+  try {
+    const { code } = req.query;
+
+    if (!code) {
+      return res.status(400).json({ error: "Authorization code is required" });
+    }
+
+    const accessToken = await fetchAccessToken(code);
+    console.log("The obtained access token is:", accessToken);
+
+    const userInfo = await fetchLinkedInUserInfo(accessToken);
+    console.log("User info from LinkedIn:", userInfo);
+
+    const { user } = await registerLinkedInUser(userInfo);
+
+
+    const payload = {
+      _id: user._id,
+      name: user.name,
+      email: user.email,
+      profilePictureUrl: user.profilePictureUrl,
+    };
+
+    const token = jwt.sign(payload, JWT_SECRET, { expiresIn: "1h" });
+
+    res.redirect(`http://localhost:5173/linkedinCallback?token=${token}`);
+
+
+  } catch (error) {
+    console.error("Unexpected error:", error.message);
+    res.status(500).json({ error: error.message });
+  }
+};
+
+
+const registerLinkedInUser = async (userInfo) => {
+  console.log("Registering LinkedIn user with info:", userInfo);
+  try {
+    if (!userInfo || !userInfo.email) {
+      throw new Error('LinkedIn user info with a valid email is required');
+    }
+
+    const { email, name, picture } = userInfo;
+
+    // Check if user already exists
+    let user = await User.findOne({ email });
+
+    if (!user) {
+      user = await User.create({
+        name,
+        email,
+        profilePictureUrl: picture,
+        password: "LinkedIn" // optional placeholder if using OAuth-only
+      });
+    }
+
+    console.log("User registered or found:", user);
+    return {
+      success: true,
+      user: {
+        _id: user._id,
+        name: user.name,
+        email: user.email,
+        profilePictureUrl: user.profilePictureUrl,
+        randomInteger: user.randomInteger,
+      },
+    };
+  } catch (error) {
+    console.error('Error during LinkedIn sign-in process:', error.message);
+    return {
+      success: false,
+      error: error.message,
+    };
+  }
+};
+
+
 
 
 
@@ -160,6 +289,7 @@ module.exports = {
     getAllUsers ,
     signInWithGoogle,
     updateUserDetails,
-    getUserByRandomInteger
+    getUserByRandomInteger,
+    signInWithLinkedIn
     };
 
