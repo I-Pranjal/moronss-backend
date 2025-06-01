@@ -226,7 +226,7 @@ const signInWithLinkedIn = async (req, res) => {
 
     const token = jwt.sign(payload, JWT_SECRET, { expiresIn: "1h" });
 
-    res.redirect(`https://www.moronss.com/linkedinCallback?token=${token}`);
+    res.redirect(`https://www.moronss.com/linkedincallback?token=${token}`);
 
 
   } catch (error) {
