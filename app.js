@@ -7,6 +7,7 @@ const axios = require('axios');
 const { signInWithLinkedIn } = require('./controllers/userController');
 
 
+
 dotenv.config();
 connectDB();
 
@@ -21,6 +22,7 @@ app.use('/api/users', require('./routes/userRoutes'));
 app.use('/api/forms', require('./routes/formRoutes')); 
 app.use('/api/chat', chatRoutes);
 app.use('/api/linkedin/callback', signInWithLinkedIn) ; 
+app.use('/api/resumemaker', require('./routes/resumeRoutes'));
 
 // Root route
 app.get('/', (req, res) => {
