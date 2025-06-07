@@ -3,6 +3,7 @@ const { getDetails } = require('../utils/v2functions');
 const { build_LinkedIn_analyser_prompt } = require('../utils/buildPrompt');
 
 const generateProfileAnalysis = async (req, res) => {
+    console.log('Received request to generate profile analysis');
     const { profileURL } = req.body;
 
     if (!profileURL) {
