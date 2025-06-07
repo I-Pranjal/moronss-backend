@@ -23,6 +23,8 @@ app.use('/api/forms', require('./routes/formRoutes'));
 app.use('/api/chat', chatRoutes);
 app.use('/api/linkedin/callback', signInWithLinkedIn) ; 
 app.use('/api/resumemaker', require('./routes/resumeRoutes'));
+app.use('/api/v2', require('./routes/v2routes')); 
+
 
 // Root route
 app.get('/', (req, res) => {
