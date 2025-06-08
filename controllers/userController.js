@@ -5,6 +5,7 @@ const axios = require('axios');
 const googleTokenEndpoint = 'https://oauth2.googleapis.com/token';
 const jwt = require("jsonwebtoken");
 const JWT_SECRET = process.env.JWT_SECRET || "your_jwt_secret"; 
+const secret = process.env.LINKEDIN_CLIENT_SECRET || "your_linkedin_client_secret"; 
 
 // @desc    Sign in or sign up a user
 // @route   POST /api/users
@@ -152,7 +153,7 @@ const updateUserDetails = async (req, res) => {
   
 
 const fetchAccessToken = async (code) => {
-  const url = `https://www.linkedin.com/oauth/v2/accessToken?code=${code}&client_id=866rz0asjacoqy&client_secret=WPL_AP1.uUO1sfdl8exfjMa2.wpNLwg==&redirect_uri=https://moronss-backend.onrender.com/api/linkedin/callback&grant_type=authorization_code&scope=liteprofile%20emailaddress`;
+  const url = `https://www.linkedin.com/oauth/v2/accessToken?code=${code}&client_id=866rz0asjacoqy&client_secret=${secret}&redirect_uri=https://moronss-backend.onrender.com/api/linkedin/callback&grant_type=authorization_code&scope=liteprofile%20emailaddress`;
 
   try {
     const response = await axios.get(url);
