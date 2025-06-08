@@ -1,5 +1,7 @@
 const KEY = process.env.RAPIDAPI_KEY;
 const axios = require('axios');
+const pdfParse = require('pdf-parse');
+
 
 async function getDetails(profileURL){
     
@@ -26,10 +28,16 @@ try {
 
 }
 
-async function Gemini_response_linkedIn(data){
-    
+async function extractJDContent(textInput, file) {
+  if (file) {
+    const pdfBuffer = file.buffer;
+    const pdfData = await pdfParse(pdfBuffer);
+    return pdfData.text.trim();
+  }
+  return textInput?.trim();
 }
 
+
 module.exports = {
-  getDetails
+  getDetails, extractJDContent
 };

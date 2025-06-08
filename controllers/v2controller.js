@@ -1,6 +1,7 @@
 const axios = require('axios');
-const { getDetails } = require('../utils/v2functions');
-const { build_LinkedIn_analyser_prompt } = require('../utils/buildPrompt');
+const { getDetails, extractJDContent } = require('../utils/v2functions');
+const { build_LinkedIn_analyser_prompt, job_role_comparison_prompt } = require('../utils/buildPrompt');
+const { getGeminiResponse } = require('../utils/generateGeminiResponse');
 
 const generateProfileAnalysis = async (req, res) => {
     console.log('Received request to generate profile analysis');
@@ -52,6 +53,27 @@ const generateProfileAnalysis = async (req, res) => {
     }
 };
 
+const compareJobs = async (req, res) => { 
+  try {
+    const jd1Text = await extractJDContent(req.body.jd1Text, req.files?.jd1File?.[0]);
+    const jd2Text = await extractJDContent(req.body.jd2Text, req.files?.jd2File?.[0]);
+
+    if (!jd1Text || !jd2Text) return res.status(400).json({ error: "Both job roles must be provided" });
+
+    const prompt = job_role_comparison_prompt(jd1Text, jd2Text); ;
+
+    const aiResponse = await getGeminiResponse(prompt);
+    const parsed = JSON.parse(aiResponse);
+    res.json({ data: parsed });
+  } catch (err) {
+    console.error("Comparison error:", err);
+    res.status(500).json({ error: "Failed to generate comparison" });
+  }
+}
+
+
+
 module.exports = {
-    generateProfileAnalysis
+    generateProfileAnalysis,
+    compareJobs
 };

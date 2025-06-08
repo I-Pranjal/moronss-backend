@@ -49,6 +49,10 @@ ${JSON.stringify(profileData, null, 2)}
 `;
 }
 
+function job_role_comparison_prompt(jd1Text, jd2Text) {
+  return  `Compare the following two job descriptions. Each may be just a title or a detailed JD.\n\nReturn JSON as an array of {parameter, jd1, jd2}. Use only what’s available.\n\nJD 1: ${jd1Text}\n\nJD 2: ${jd2Text}`;
+}
 
-module.exports = { buildPrompt, build_LinkedIn_analyser_prompt };
+
+module.exports = { buildPrompt, build_LinkedIn_analyser_prompt, job_role_comparison_prompt };
 
