@@ -51,14 +51,26 @@ const generateContent =  async (req, res) => {
       ],
     };
 
-    const geminiResponse = await axios.post(url, requestBody, {
-      headers: { 'Content-Type': 'application/json' },
-    });
+  const geminiResponse = await axios.post(url, requestBody, {
+  headers: { 'Content-Type': 'application/json' },
+});
 
-    const rawText = geminiResponse.data.candidates?.[0]?.content?.parts?.[0]?.text || '';
-    const cleaned =  rawText.replace(/```json|```/g, '').trim();
-    const parsed = JSON.parse(cleaned);
-      return res.status(200).json(parsed); 
+const rawText = geminiResponse.data.candidates?.[0]?.content?.parts?.[0]?.text || '';
+
+// Extract JSON content from inside the ```json code block
+const jsonMatch = rawText.match(/```json\s*([\s\S]*?)\s*```/);
+
+if (jsonMatch && jsonMatch[1]) {
+  try {
+    const parsedJson = JSON.parse(jsonMatch[1]);
+    return res.status(200).json(parsedJson);
+  } catch (error) {
+    return res.status(500).json({ error: 'Failed to parse JSON from Gemini response' });
+  }
+} else {
+  return res.status(500).json({ error: 'No valid JSON block found in Gemini response' });
+}
+
   }
   catch (err) {
     console.error('Gemini error:', err.message);
