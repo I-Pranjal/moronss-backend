@@ -84,6 +84,7 @@ const compareJobs = async (req, res) => {
 
 const suggest_project = async (req, res) => {
     const { domain, techStack, level } = req.body;
+    console.log("SUggesting project..."); 
 
     const prompt = suggest_project_prompt(domain, techStack, level);
 
@@ -105,6 +106,8 @@ const suggest_project = async (req, res) => {
         res.status(500).json({ error: "Failed to generate project ideas." });
     }
 };
+
+
 
 module.exports = {
     generateProfileAnalysis,
