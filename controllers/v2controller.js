@@ -60,11 +60,21 @@ const compareJobs = async (req, res) => {
 
     if (!jd1Text || !jd2Text) return res.status(400).json({ error: "Both job roles must be provided" });
 
-    const prompt = job_role_comparison_prompt(jd1Text, jd2Text); ;
+    const prompt = job_role_comparison_prompt(jd1Text, jd2Text); 
 
     const aiResponse = await getGeminiResponse(prompt);
-    const parsed = JSON.parse(aiResponse);
-    res.json({ data: parsed });
+    const rawText = aiResponse?.candidates?.[0]?.content?.parts?.[0]?.text || '';
+     let parsed = {};
+        try {
+            // Remove code block markers and trim whitespace
+            const cleaned = rawText.replace(/```json|```/g, '').trim();
+            parsed = JSON.parse(cleaned);
+            return res.status(200).json(parsed);
+        } catch (err) {
+            console.error('Error parsing Gemini response:', err.message);
+            // Fallback: return raw text if parsing fails
+            return res.status(200).json({ raw: rawText });
+        }
   } catch (err) {
     console.error("Comparison error:", err);
     res.status(500).json({ error: "Failed to generate comparison" });
