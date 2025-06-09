@@ -62,6 +62,26 @@ JD 2: ${jd2Text}
 Respond only with valid JSON array.` ;
 }
 
+function suggest_project_prompt(domain, techStack, level) {
+return `You are an expert project mentor.
 
-module.exports = { buildPrompt, build_LinkedIn_analyser_prompt, job_role_comparison_prompt };
+Suggest 10 project ideas in JSON format for a user in the "${domain}" domain who is at a "${level}" level of expertise.
+
+They are familiar with the following tech stack: ${techStack}
+
+Each project should include:
+- "title": a short project title
+- "description": a 1-2 line concise explanation of the project
+- "tags": an array of relevant skills or technologies
+
+Return only a JSON array of project objects.`; 
+}
+
+
+module.exports = {
+  buildPrompt,
+  build_LinkedIn_analyser_prompt,
+  job_role_comparison_prompt,
+  suggest_project_prompt
+};
 

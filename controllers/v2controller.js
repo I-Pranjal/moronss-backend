@@ -1,6 +1,6 @@
 const axios = require('axios');
 const { getDetails, extractJDContent } = require('../utils/v2functions');
-const { build_LinkedIn_analyser_prompt, job_role_comparison_prompt } = require('../utils/buildPrompt');
+const { build_LinkedIn_analyser_prompt, job_role_comparison_prompt, suggest_project_prompt } = require('../utils/buildPrompt');
 const { getGeminiResponse } = require('../utils/generateGeminiResponse');
 
 const generateProfileAnalysis = async (req, res) => {
@@ -53,18 +53,19 @@ const generateProfileAnalysis = async (req, res) => {
     }
 };
 
-const compareJobs = async (req, res) => { 
-  try {
-    const jd1Text = await extractJDContent(req.body.jd1Text, req.files?.jd1File?.[0]);
-    const jd2Text = await extractJDContent(req.body.jd2Text, req.files?.jd2File?.[0]);
+const compareJobs = async (req, res) => {
+    try {
+        const jd1Text = await extractJDContent(req.body.jd1Text, req.files?.jd1File?.[0]);
+        const jd2Text = await extractJDContent(req.body.jd2Text, req.files?.jd2File?.[0]);
 
-    if (!jd1Text || !jd2Text) return res.status(400).json({ error: "Both job roles must be provided" });
+        if (!jd1Text || !jd2Text)
+            return res.status(400).json({ error: "Both job roles must be provided" });
 
-    const prompt = job_role_comparison_prompt(jd1Text, jd2Text); 
+        const prompt = job_role_comparison_prompt(jd1Text, jd2Text);
 
-    const aiResponse = await getGeminiResponse(prompt);
-    const rawText = aiResponse?.candidates?.[0]?.content?.parts?.[0]?.text || '';
-     let parsed = {};
+        const aiResponse = await getGeminiResponse(prompt);
+        const rawText = aiResponse?.candidates?.[0]?.content?.parts?.[0]?.text || '';
+        let parsed = {};
         try {
             // Remove code block markers and trim whitespace
             const cleaned = rawText.replace(/```json|```/g, '').trim();
@@ -75,15 +76,38 @@ const compareJobs = async (req, res) => {
             // Fallback: return raw text if parsing fails
             return res.status(200).json({ raw: rawText });
         }
-  } catch (err) {
-    console.error("Comparison error:", err);
-    res.status(500).json({ error: "Failed to generate comparison" });
-  }
-}
+    } catch (err) {
+        console.error("Comparison error:", err);
+        res.status(500).json({ error: "Failed to generate comparison" });
+    }
+};
 
+const suggest_project = async (req, res) => {
+    const { domain, techStack, level } = req.body;
 
+    const prompt = suggest_project_prompt(domain, techStack, level);
+
+    try {
+        const ideas = await getGeminiResponse(prompt);
+        const rawText = ideas?.candidates?.[0]?.content?.parts?.[0]?.text || '';
+        let parsed = {};
+        try {
+            // Remove code block markers and trim whitespace
+            const cleaned = rawText.replace(/```json|```/g, '').trim();
+            parsed = JSON.parse(cleaned);
+            return res.status(200).json(parsed);
+        } catch (err) {
+            console.error('Error parsing Gemini response:', err.message);
+            // Fallback: return raw text if parsing fails
+            return res.status(200).json({ raw: rawText });
+        }
+    } catch (e) {
+        res.status(500).json({ error: "Failed to generate project ideas." });
+    }
+};
 
 module.exports = {
     generateProfileAnalysis,
-    compareJobs
+    compareJobs,
+    suggest_project
 };
