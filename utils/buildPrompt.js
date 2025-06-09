@@ -50,7 +50,16 @@ ${JSON.stringify(profileData, null, 2)}
 }
 
 function job_role_comparison_prompt(jd1Text, jd2Text) {
-  return  `Compare the following two job descriptions. Each may be just a title or a detailed JD.\n\nReturn JSON as an array of {parameter, jd1, jd2}. Use only what’s available.\n\nJD 1: ${jd1Text}\n\nJD 2: ${jd2Text}`;
+ return `Compare the following two job descriptions. Each job may contain only a title or detailed description.
+
+Return JSON as an array of objects with keys: "parameter", "jd1", "jd2".
+The parameters should be dynamically chosen based on what information is available (e.g., title, skills, experience, tech stack, benefits).
+Provide at least 5 known parameters, but no more than 10. "Preferred qualifications, skills and expected salary must be there. if any of these parameters are not provided, then use interenet to give a value but do not answer nil. In case of expected salary it should be in INR.
+
+JD 1: ${jd1Text}
+JD 2: ${jd2Text}
+
+Respond only with valid JSON array.` ;
 }
 
 
