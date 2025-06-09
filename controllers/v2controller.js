@@ -1,7 +1,8 @@
 const axios = require('axios');
 const { getDetails, extractJDContent } = require('../utils/v2functions');
-const { build_LinkedIn_analyser_prompt, job_role_comparison_prompt, suggest_project_prompt } = require('../utils/buildPrompt');
+const { build_LinkedIn_analyser_prompt, job_role_comparison_prompt, suggest_project_prompt, generateAIInsights } = require('../utils/buildPrompt');
 const { getGeminiResponse } = require('../utils/generateGeminiResponse');
+const analysePortfolio = require('../utils/analyseWebsite').analysePortfolio;
 
 const generateProfileAnalysis = async (req, res) => {
     console.log('Received request to generate profile analysis');
@@ -106,10 +107,37 @@ const suggest_project = async (req, res) => {
     }
 };
 
+const analyse_Portfolio = async (req, res) => {
+  const { url, targetRole } = req.body;
+
+  if (!url || !targetRole) {
+    return res.status(400).json({ error: 'URL and targetRole are required.' });
+  }
+
+   const siteData = await analysePortfolio(url);
+   const prompt = generateAIInsights(siteData, targetRole);
+   const aiResponse = await getGeminiResponse(prompt);
+    const rawText = aiResponse?.candidates?.[0]?.content?.parts?.[0]?.text || '';
+        let parsed = {};
+        try {
+            // Remove code block markers and trim whitespace
+            const cleaned = rawText.replace(/```json|```/g, '').trim();
+            parsed = JSON.parse(cleaned);
+            return res.status(200).json(parsed);
+        } catch (err) {
+            console.error('Error parsing Gemini response:', err.message);
+            // Fallback: return raw text if parsing fails
+            return res.status(200).json({ raw: rawText });
+        }
+  
+};
+
+
 
 
 module.exports = {
     generateProfileAnalysis,
     compareJobs,
-    suggest_project
+    suggest_project,
+    analyse_Portfolio
 };

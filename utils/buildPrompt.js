@@ -77,11 +77,42 @@ Each project should include:
 Return only a JSON array of project objects.`; 
 }
 
+function generateAIInsights(siteData, targetRole) {
+  return `
+You are a portfolio reviewer AI. Review the developer portfolio based on this website data:
+
+Title: ${siteData.title}
+Meta Description: ${siteData.metaDescription}
+Sections Found: ${siteData.sections.join(', ')}
+
+Content Snippet:
+${siteData.textContent}
+
+The target role is: ${targetRole}
+
+Evaluate this portfolio and provide:
+1. A score out of 100.
+2. Strengths (3 points).
+3. Weaknesses (3 points).
+4. Suggestions to improve.
+5. How well it aligns with the role "${targetRole}".
+Return your response as a JSON object with these keys:
+{
+  score: number,
+  strengths: string[],
+  weaknesses: string[],
+  suggestions: string[],
+  alignment: string
+}`;
+}
+
+
 
 module.exports = {
   buildPrompt,
   build_LinkedIn_analyser_prompt,
   job_role_comparison_prompt,
-  suggest_project_prompt
+  suggest_project_prompt,
+  generateAIInsights
 };
 
