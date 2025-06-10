@@ -2,7 +2,6 @@ const axios = require('axios');
 const { getDetails, extractJDContent } = require('../utils/v2functions');
 const { build_LinkedIn_analyser_prompt, job_role_comparison_prompt, suggest_project_prompt, generateAIInsights } = require('../utils/buildPrompt');
 const { getGeminiResponse } = require('../utils/generateGeminiResponse');
-const analysePortfolio = require('../utils/analyseWebsite').analysePortfolio;
 
 const generateProfileAnalysis = async (req, res) => {
     console.log('Received request to generate profile analysis');
@@ -114,7 +113,7 @@ const analyse_Portfolio = async (req, res) => {
     return res.status(400).json({ error: 'URL and targetRole are required.' });
   }
 
-   const siteData = await analysePortfolio(url);
+   const siteData = await axios.get(`https://webscraper-0f3m.onrender.com/scrape?url=${url}`); 
    const prompt = generateAIInsights(siteData, targetRole);
    const aiResponse = await getGeminiResponse(prompt);
     const rawText = aiResponse?.candidates?.[0]?.content?.parts?.[0]?.text || '';
