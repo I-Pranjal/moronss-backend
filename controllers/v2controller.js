@@ -114,8 +114,7 @@ const analyse_Portfolio = async (req, res) => {
   }
 
    const siteData = await axios.get(`https://webscraper-0f3m.onrender.com/scrape?url=${url}`); 
-   console.log(siteData);
-   const prompt = generateAIInsights(siteData, targetRole);
+   const prompt = generateAIInsights(siteData.data, targetRole);
    const aiResponse = await getGeminiResponse(prompt);
     const rawText = aiResponse?.candidates?.[0]?.content?.parts?.[0]?.text || '';
         let parsed = {};
